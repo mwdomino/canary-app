@@ -1,0 +1,6 @@
+apiVersion: v2
+name: location-apps
+description: Installs app1 and app2 together (location-versioned).
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

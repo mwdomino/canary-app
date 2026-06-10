@@ -1,0 +1,20 @@
+{{- range $name, $app := .Values.apps }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "location-apps.labels" $ | nindent 4 }}
+spec:
+  parentRefs:
+    - name: {{ $.Values.gateway.name }}
+      namespace: {{ $.Values.gateway.namespace }}
+      sectionName: http
+  hostnames:
+    - {{ $name }}-{{ $.Values.env }}.{{ $.Values.hostSuffix }}
+  rules:
+    - backendRefs:
+        - name: {{ $name }}
+          port: 80
+{{- end }}

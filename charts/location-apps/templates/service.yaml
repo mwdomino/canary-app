@@ -1,0 +1,17 @@
+{{- range $name, $app := .Values.apps }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+  labels:
+    {{- include "location-apps.labels" $ | nindent 4 }}
+    app.kubernetes.io/name: {{ $name }}
+spec:
+  selector:
+    app.kubernetes.io/name: {{ $name }}
+  ports:
+    - port: 80
+      targetPort: http
+      name: http
+{{- end }}

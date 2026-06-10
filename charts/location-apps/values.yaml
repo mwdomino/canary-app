@@ -1,0 +1,19 @@
+env: dev
+hostSuffix: 127.0.0.1.nip.io
+gateway:
+  namespace: gateway
+  name: shared
+apps:
+  app1:
+    image:
+      repository: ghcr.io/mwdomino/app1
+      tag: "0.0.0"
+    color: "#114488"
+  app2:
+    image:
+      repository: ghcr.io/mwdomino/app2
+      tag: "0.0.0"
+    color: "#117744"
+resources:
+  requests: { cpu: 10m, memory: 16Mi }
+  limits:   { cpu: 100m, memory: 64Mi }
