@@ -8,7 +8,7 @@ image:
 replicas: 2
 canary:
   steps: [10, 25, 50]
-  pause: 1m
+  pause: 10s
 resources:
   requests: { cpu: 10m, memory: 16Mi }
   limits:   { cpu: 100m, memory: 64Mi }
