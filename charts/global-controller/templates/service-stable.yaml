@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: global-controller-stable
+  labels:
+    {{- include "global-controller.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/name: global-controller
+  ports:
+    - port: 80
+      targetPort: http
+      name: http

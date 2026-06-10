@@ -1,0 +1,14 @@
+hostname: global.127.0.0.1.nip.io
+gateway:
+  namespace: gateway
+  name: shared
+image:
+  repository: ghcr.io/mwdomino/global-controller
+  tag: "0.0.0"
+replicas: 2
+canary:
+  steps: [10, 25, 50, 100]
+  pause: 1m
+resources:
+  requests: { cpu: 10m, memory: 16Mi }
+  limits:   { cpu: 100m, memory: 64Mi }
