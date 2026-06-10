@@ -1,0 +1,50 @@
+name: build-global
+on:
+  push:
+    tags: ['global-v*']
+permissions:
+  contents: read
+  packages: write
+jobs:
+  build-and-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract version
+        id: ver
+        run: echo "version=${GITHUB_REF_NAME#global-v}" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: global-controller
+          push: true
+          build-args: APP_VERSION=${{ steps.ver.outputs.version }}
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/global-controller:${{ steps.ver.outputs.version }}
+      - name: Checkout k8s-canary
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/k8s-canary
+          token: ${{ secrets.K8S_CANARY_PAT }}
+          path: k8s-canary
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      - name: Bump image tag
+        working-directory: k8s-canary
+        run: |
+          yq -i '.image.tag = "${{ steps.ver.outputs.version }}"' apps/global/values.yaml
+          git config user.name  "canary-app-ci"
+          git config user.email "canary-app-ci@users.noreply.github.com"
+          git add apps/global/values.yaml
+          if git diff --cached --quiet; then
+            echo "no change"; exit 0
+          fi
+          git commit -m "bump(global): ${{ steps.ver.outputs.version }}"
+          git push
