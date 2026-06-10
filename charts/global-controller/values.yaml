@@ -7,7 +7,7 @@ image:
   tag: "0.0.0"
 replicas: 2
 canary:
-  steps: [10, 25, 50, 100]
+  steps: [10, 25, 50]
   pause: 1m
 resources:
   requests: { cpu: 10m, memory: 16Mi }
